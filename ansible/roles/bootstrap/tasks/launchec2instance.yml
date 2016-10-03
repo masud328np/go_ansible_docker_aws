@@ -1,0 +1,24 @@
+- name: launching ec2 instance
+  ec2:
+    key_name: "{{ serverkeyname }}"
+    instance_type: t2.micro
+    image: ami-562cf236
+    wait: yes
+    group_id: "{{ basic_firewalls.group_id }}"
+    count: 1
+    assign_public_ip: yes
+    instance_profile_name: ecsInstanceRole
+    region: us-west-2
+    vpc_subnet_id: "{{ subnet.subnet.id }}"
+    instance_tags:
+                  env: "{{ env }}"
+    user_data: |
+              #!/bin/bash
+              echo ECS_CLUSTER={{ ecs_cluster }} >> /etc/ecs/ecs.config
+    state: present
+  register: ec2output
+
+- name: what we received
+  debug: var=ec2output
+
+

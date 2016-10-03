@@ -1,0 +1,18 @@
+---
+- name: include vars 
+  include_vars: 
+    file: ../../../files/container.json
+
+- name: see what we get
+  debug: var=containers.0.name
+
+- name: Create task definition
+  ecs_taskdefinition:
+    containers: "{{  containers }}" 
+    family: echo-server
+    state: present
+  register: task_output
+
+- name: what we got
+  debug: var=task_output
+

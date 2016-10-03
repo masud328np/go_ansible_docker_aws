@@ -1,0 +1,9 @@
+- name: Create an EC2 key
+  ec2_key: 
+    name: "{{ serverkeyname }}"
+    region: us-west-2
+  register: ec2_key
+
+- name: save private key
+  copy: content="{{ ec2_key.key.private_key }}" dest="./aws-stage-private.pem" mode=0600
+  when: ec2_key.changed

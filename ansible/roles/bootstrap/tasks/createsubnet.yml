@@ -1,0 +1,9 @@
+- name: Create subnet for database servers
+  ec2_vpc_subnet:
+    state: present
+    region: us-west-2
+    vpc_id: "{{ vpc.vpc_id }}"
+    cidr: 172.23.0.0/28
+    resource_tags:
+      Name: russels Subnet
+  register: subnet

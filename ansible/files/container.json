@@ -1,0 +1,16 @@
+{"containers":[{
+
+  "name": "echo-server_container",
+  "image": "aws/echo-server:latest",
+  "memory": 128,
+  "cpu": 1,
+  "essential": true,
+  "portMappings": [{
+                  "containerPort": 8090,
+                  "protocol": "tcp"
+                  }],
+  "entryPoint": [ "echo-server" ],
+  "workingDirectory": "/",
+
+}]
+}
