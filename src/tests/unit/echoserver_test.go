@@ -79,8 +79,10 @@ func Test_IfAcceptConnectionCallEchoHandler(t *testing.T) {
 
 	echoserver := lib.NewServer(mockHandler, mockNet)
 
-	echoserver.StartListening("8090")
-
+	result := echoserver.StartListening("8090")
+	if result == false {
+		t.Fail()
+	}
 	mockNet.AssertCalled(t, "Listen", mock.Anything, mock.Anything)
 	mockListener.AssertCalled(t, "Accept")
 	mockHandler.AssertCalled(t, "Handle", mockConn)

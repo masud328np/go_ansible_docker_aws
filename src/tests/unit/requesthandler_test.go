@@ -24,12 +24,11 @@ func Test_HandleCallRead(t *testing.T) {
 func Test_HandleIfMsgRespond(t *testing.T) {
 	handler := lib.NewHandler()
 	mockConn := new(MockConnection)
-	buf := make([]byte, 1024)
-	msgBytes := []byte("HI")
-	mockConn.On("Read", buf).Return(12, nil)
+
+	mockConn.On("Read", mock.Anything).Return(2, nil)
 
 	mockConn.On("Close").Return(nil)
-	mockConn.On("Write", mock.Anything).Return(len(msgBytes), nil)
+	mockConn.On("Write", mock.Anything).Return(2, nil)
 
 	handler.Handle(mockConn)
 

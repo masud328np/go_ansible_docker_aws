@@ -1,4 +1,3 @@
 serverkeyname: echo-server-key
-ecs_cluster: stg-cluster
 env: development
 tag: russell

@@ -1,10 +1,10 @@
 - name: build go
-  shell: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo  -o ../docker/echoserver ../echoserver.go
+  shell: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo  -o ../docker/echoserver ../src/echoserver.go
 
 - name: Build image
   docker_image:
     path: ../docker/
-    name: echoserver:latest
+    name: {{ image }}
 
 - name: start a container
   docker_container:
@@ -14,31 +14,16 @@
       ports:
         - "8090:8090"
 
-          # name: run UAT locally
-          # shell:  go test
-          # args:
-          #   chdir: ../uat/
-- name: get  docker  aws login
-  shell: aws ecr get-login --region {{ awsregion }}
-  register: login
 
-- name: get  docker  aws login
-  shell: "{{ login.stdout }}"
-  register: login
-- name: print login
-  debug: var=login
-- name: get repository
-  shell: aws ecr describe-repositories
-  register: repos
+- name: run UAT locally
+  shell:  go test
+  environment:
+   envset: true
+  args:
+    chdir: ../src/tests/uat
 
-- name: show repos
-  debug:  var=repos
+- name: stop a container
+  docker_container:
+      name: echoserver_container
+      state: absent                    
 
-
-- name: create repo
-  shell:  aws ecr create-repository --repository-name echoserver
-
-- name: tag image 
-  shell: docker tag echoserver:latest 042967111928.dkr.ecr.{{ awsregion }}.amazonaws.com/echoserver:latest
-- name: push image 
-  shell: docker push 042967111928.dkr.ecr.{{ awsregion }}.amazonaws.com/echoserver:latest 

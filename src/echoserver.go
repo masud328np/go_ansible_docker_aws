@@ -9,6 +9,5 @@ func main() {
 	listener := lib.NewListener()
 	handler := lib.NewHandler()
 	echoserver := lib.NewServer(handler, listener)
-
 	echoserver.StartListening(PORT)
 }

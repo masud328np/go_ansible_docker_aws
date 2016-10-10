@@ -20,12 +20,11 @@ type EchoServer struct {
 
 func (srvr *EchoServer) StartListening(addrPort string) bool {
 
-	listener, err := srvr.NetWrapper.Listen("tcp", "localhost:"+addrPort)
+	listener, err := srvr.NetWrapper.Listen("tcp", ":"+addrPort)
 	if err != nil {
 		fmt.Sprintf("error :", err.Error())
 		return false
 	}
-
 	defer listener.Close()
 	for {
 		conn, err := listener.Accept()
@@ -33,6 +32,7 @@ func (srvr *EchoServer) StartListening(addrPort string) bool {
 		srvr.RequestHandler.Handle(conn)
 		//}
 		if err != nil || conn == nil {
+			//panic(err.Error())
 			break
 		}
 	}
@@ -43,7 +43,6 @@ type EchoListener struct {
 }
 
 func (l EchoListener) Listen(proto string, addrPort string) (listener net.Listener, err error) {
-	fmt.Printf("Listener")
 	listener, err = net.Listen(proto, addrPort)
 	return
 }
