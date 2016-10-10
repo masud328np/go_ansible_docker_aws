@@ -5,5 +5,5 @@
     vpc_id: "{{ vpc.vpc_id }}"
     cidr: 172.23.0.0/28
     resource_tags:
-      Name: russels Subnet
+      Name: "{{ tag }}"
   register: subnet

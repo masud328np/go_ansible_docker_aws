@@ -1,4 +1,4 @@
 serverkeyname: echo-server-key
 ecs_cluster: stg-cluster
-env: staging
-
+env: development
+tag: russell

@@ -1,0 +1,8 @@
+- name: Run task
+  ecs_task:
+    operation: run
+    cluster: "{{ ecs_cluster }}"
+    task_definition: echoserver 
+    count: 1
+    started_by: ec2-user
+  register: task_output

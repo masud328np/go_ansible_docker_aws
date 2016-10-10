@@ -1,7 +1,19 @@
 - name: create vpc
   ec2_vpc:
-     state: present
-     cidr_block: 172.23.0.0/16
-     resource_tags: { "Environment":"Development" }
-     region: us-west-2
+        state: present
+        cidr_block: 172.22.0.0/16
+        resource_tags: { "Name":"{{ tag }}","Environment":"{{ env }}"}
+        subnets:
+          - cidr: 172.22.2.0/24
+            resource_tags: { "Name":"{{ tag }}","Environment":"{{ env }}"}
+        internet_gateway: True
+        route_tables:
+          - subnets:
+              - 172.22.2.0/24
+            routes:
+              - dest: 0.0.0.0/0
+                gw: igw
+            resource_tags: { "Name":"{{ tag }}","Environment":"{{ env }}"}
+        region: us-west-2
   register: vpc
+

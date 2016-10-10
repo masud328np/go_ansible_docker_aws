@@ -9,7 +9,7 @@
 - name: Create task definition
   ecs_taskdefinition:
     containers: "{{  containers }}" 
-    family: echo-server
+    family: echoserver
     state: present
   register: task_output
 

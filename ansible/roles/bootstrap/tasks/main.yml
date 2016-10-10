@@ -1,10 +1,11 @@
-- include: createvpc.yml
-- include: createigw.yml
-- include: createsubnet.yml
-- include: createcluster.yml
-- include: createsecuritygroup.yml
-- include: createkeypair.yml
-- include: launchec2instance.yml
+#- include: createvpc.yml
+  #- include: createigw.yml
+  #- include: createsubnet.yml
+  #- include: createroutingtable.yml
+  #- include: createcluster.yml
+  #- include: createsecuritygroup.yml
+  #- include: createkeypair.yml
+  #- include: launchec2instance.yml
 - include: createecstask.yml
   # - include: createecstask.yml
   # - include: createecstask.yml

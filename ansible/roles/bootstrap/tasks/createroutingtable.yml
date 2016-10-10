@@ -1,0 +1,13 @@
+# Basic creation example:
+- name: Set up public subnet route table
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc.vpc_id }}"
+    region: us-west-2
+    tags:
+      Name: "{{ tag }}"
+    subnets:
+      - "{{ subnet.subnet.id }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ igw.gateway_id }}"
+  register: public_route_table

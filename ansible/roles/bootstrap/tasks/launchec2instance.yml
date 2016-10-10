@@ -1,24 +1,56 @@
+
+- name: gather facts
+  action: ec2_facts  
+
 - name: launching ec2 instance
   ec2:
-    key_name: "{{ serverkeyname }}"
-    instance_type: t2.micro
-    image: ami-562cf236
-    wait: yes
-    group_id: "{{ basic_firewalls.group_id }}"
-    count: 1
-    assign_public_ip: yes
-    instance_profile_name: ecsInstanceRole
-    region: us-west-2
-    vpc_subnet_id: "{{ subnet.subnet.id }}"
-    instance_tags:
-                  env: "{{ env }}"
-    user_data: |
-              #!/bin/bash
-              echo ECS_CLUSTER={{ ecs_cluster }} >> /etc/ecs/ecs.config
-    state: present
-  register: ec2output
+   key_name: "{{ serverkeyname }}"
+   instance_type: t2.micro
+   image: ami-562cf236
+   wait: yes
+   group_id: "{{ basic_firewalls.group_id }}"
+   count: 1
+   assign_public_ip: yes
+   instance_profile_name: ecsInstanceRole
+   region: us-west-2
+   vpc_subnet_id: "{{ vpc.subnets.0.id }}"
+   instance_tags: {"Name":"{{ tag }}","Environment":"{{ env }}"}
+   user_data: |
+             #!/bin/bash
+             echo ECS_CLUSTER={{ ecs_cluster }} >> /etc/ecs/ecs.config
+   state: present
+  register: ec2
 
-- name: what we received
-  debug: var=ec2output
+- name: set fact
+  set_fact:
+      public_ip: "{{ ec2.instances.0.public_ip }}"
+      instance_id: "{{ ec2.instances.0.id }}"
+
+
+- name: Add ec2 to the local host group (located inside the directory)
+  lineinfile: 
+        dest: ./host
+        regexp: "{{ public_ip }}"
+        insertafter: [launched] 
+        line: "{{ public_ip }} ansible_ssh_private_key_file=./aws-stage-private.pem ansible_user=ec2-user"
+
+
+        # name: Wait for SSH to come up
+        # wait_for: 
+        #   host: "{{ public_ip }} "
+        #   port: 22 
+        #   state: started
+
+- name: Add tag to Instance(s)
+  ec2_tag:
+     resource: "{{ instance_id }}" 
+     region: us-west-2
+     state: present
+  args:
+     tags:
+       Name: "{{ tag }}"
+       Environment: "{{ env }}"
+
+
 
 
