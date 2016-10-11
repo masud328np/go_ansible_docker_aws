@@ -4,7 +4,7 @@
 - name: Build image
   docker_image:
     path: ../docker/
-    name: {{ image }}
+    name: "{{ image }}"
 
 - name: start a container
   docker_container:
@@ -21,6 +21,9 @@
    envset: true
   args:
     chdir: ../src/tests/uat
+  register: UAT
+  changed_when: "'PASS' not in UAT.stdout" 
+  failed_when:  "'FAIL' in UAT.stdout"
 
 - name: stop a container
   docker_container:

@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  pre_tasks:
+    - name: get  docker  aws login
+      shell: aws ecr get-login --region {{ awsregion }}
+      register: login
+      changed_when: false
+    
+    - name: execute login
+      shell: "{{ login.stdout }}"
+      changed_when: false
+
+  roles: 
+    - bootstrap
+    - build
+    - deploy
+    

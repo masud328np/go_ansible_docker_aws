@@ -3,32 +3,29 @@
     path: ../docker/
     name: "{{ image }}"
 
-- name: get  docker  aws login
-  shell: aws ecr get-login --region {{ awsregion }}
-  register: login
+    #- name: get  docker  aws login
+    #  shell: aws ecr get-login --region {{ awsregion }}
+    #  register: login
+    #  changed_when: false
+    #
+    #- name: execute login
+    #  shell: "{{ login.stdout }}"
+    #  changed_when: false
 
 - name: get repos
   shell: aws ecr describe-repositories
   register: repos
 
-- name: set fact
-  set_fact:
-    repos: "{{repos.stdout}}"
-
-- name: debugging
-  debug:
-    var : "{{ repos.repositories | selectattr('repositoryName', 'echoserver') }}"
-
 - name: create repo
   shell:  aws ecr create-repository --repository-name {{ ecrRepoName }}
-  when:    repos.repositories|length ==  0 or   repos.repositories.0.repositoryName!= "{{ecrRepoName }}"
+  when:  "ecrRepoName not in repos.stdout"   #repos.repositories|length ==  0 or   repos.repositories.0.repositoryName!= "{{ecrRepoName }}"
+
 - name: push image
   docker_image:
     name: "{{ image }}"
     repository: "{{ ecrImage }}"
     state: present
     push: true
-    #shell: docker push  {{ ecrImage }}
 
 
 - name: Remove echoserver image

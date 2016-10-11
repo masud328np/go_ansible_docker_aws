@@ -1,6 +1,20 @@
-
 - name: gather facts
-  action: ec2_facts  
+  shell: aws ec2 describe-instances --filter Name=tag-value,Values={{ tag }} Name=subnet-id,Values={{ vpc.subnets.0.id }} Name=instance-state-name,Values=running
+  register: ec2out
+  changed_when: false
+
+- name: add ec2 fact
+  set_fact:
+    instances: "{{ ec2out.stdout }}"
+  changed_when: false
+
+- name: terminate ec2
+  ec2:
+    instance_ids: '{{ item.InstanceId }}'
+    region: '{{ awsregion }}'
+    state: absent
+    wait: True
+  with_items: "{{  instances.Reservations  | map(attribute='Instances') | list }}"
 
 - name: launching ec2 instance
   ec2:
@@ -12,7 +26,7 @@
    count: 1
    assign_public_ip: yes
    instance_profile_name: ecsInstanceRole
-   region: us-west-2
+   region: "{{ awsregion }}"
    vpc_subnet_id: "{{ vpc.subnets.0.id }}"
    instance_tags: {"Name":"{{ tag }}","Environment":"{{ env }}"}
    user_data: |
@@ -20,26 +34,15 @@
              echo ECS_CLUSTER={{ ecs_cluster }} >> /etc/ecs/ecs.config
    state: present
   register: ec2
-
+  #when:  "tag  not in ec2out.stdout" 
+  
+  
 - name: set fact
   set_fact:
       public_ip: "{{ ec2.instances.0.public_ip }}"
       instance_id: "{{ ec2.instances.0.id }}"
-
-
-- name: Add ec2 to the local host group (located inside the directory)
-  lineinfile: 
-        dest: ./host
-        regexp: "{{ public_ip }}"
-        insertafter: [launched] 
-        line: "{{ public_ip }} ansible_ssh_private_key_file=./aws-stage-private.pem ansible_user=ec2-user"
-
-
-        # name: Wait for SSH to come up
-        # wait_for: 
-        #   host: "{{ public_ip }} "
-        #   port: 22 
-        #   state: started
+  when: ec2.changed
+  changed_when: false
 
 - name: Add tag to Instance(s)
   ec2_tag:
@@ -49,8 +52,14 @@
   args:
      tags:
        Name: "{{ tag }}"
-       Environment: "{{ env }}"
+  when: ec2.changed
+ 
 
-
-
-
+- name: wait until the ec2 is running completely
+  shell: aws ec2 describe-instance-status  --instance-ids {{ instance_id }} --filter Name=instance-status.reachability,Values=passed
+  register: result
+  until:  result.stdout.find("passed") != -1
+  retries: 20
+  delay: 20
+  when: ec2.changed
+  changed_when: false

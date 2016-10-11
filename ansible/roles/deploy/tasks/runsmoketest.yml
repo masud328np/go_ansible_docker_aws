@@ -1,0 +1,8 @@
+- name: wait a bit
+  wait_for: 
+    timeout: 60
+  
+- name: run smoke test
+  shell: echo "hi" | nc {{ public_ip }} 8090
+  register: output
+  failed_when:  "'hi' not in output.stdout" 

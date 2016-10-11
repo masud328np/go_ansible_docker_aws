@@ -2,3 +2,4 @@
 - include: createcluster.yml
 - include: createsecuritygroup.yml
 - include: createkeypair.yml
+- include: launchec2instance.yml

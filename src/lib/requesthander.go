@@ -21,7 +21,7 @@ func (hndlr *EchoHandler) Handle(conn net.Conn) {
 		return
 	}
 
-	conn.Write([]byte("received: "))
+	conn.Write([]byte("I received: "))
 
 	conn.Write(buf[:n])
 }

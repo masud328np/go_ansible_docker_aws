@@ -1,6 +1,5 @@
-
 ---
-- name: include vars 
+- name: extract container def
   include_vars: 
     file: ../../../files/container.json
 
@@ -8,13 +7,30 @@
 - name: Create task definition
   ecs_taskdefinition:
     containers: "{{  containers }}" 
-    family: echoserver
+    family: "{{ tag }}"
     state: present
+
+    #- name: Stop a task
+    #  ecs_task:
+    #      operation: stop
+    #      task_definition: "{{ tag }}"
+    #
+
+- name: Wait for register
+  ecs_cluster:
+      name: "{{ ecs_cluster }}"
+      state: has_instances
+      delay: 30
+      repeat: 10
+  register: task_output
+
+
+
 
 - name: Run task
   ecs_task:
     operation: run
     cluster: "{{ ecs_cluster }}"
-    task_definition: echoserver 
+    task_definition: "{{ tag }}" 
     count: 1
     started_by: ec2-user
