@@ -1,7 +1,7 @@
 - name: Create an EC2 key
   ec2_key: 
     name: "{{ serverkeyname }}"
-    region: us-west-2
+    region: "{{ awsregion }}"
   register: ec2_key
 
 - name: save private key

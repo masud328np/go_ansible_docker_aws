@@ -47,7 +47,7 @@
 - name: Add tag to Instance(s)
   ec2_tag:
      resource: "{{ instance_id }}" 
-     region: us-west-2
+     region: "{{ awsregion }}"
      state: present
   args:
      tags:

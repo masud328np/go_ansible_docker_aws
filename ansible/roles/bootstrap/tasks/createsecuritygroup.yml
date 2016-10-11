@@ -2,7 +2,7 @@
   ec2_group:
       name: echo_server_security_group
       description: security group for echo server
-      region: us-west-2
+      region: "{{ awsregion }}"
       vpc_id: "{{ vpc.vpc_id }}"
       rules:
           - proto: tcp

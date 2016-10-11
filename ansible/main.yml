@@ -8,6 +8,7 @@
     
     - name: execute login
       shell: "{{ login.stdout }}"
+      when: "'docker login' in login"
       changed_when: false
 
   roles: 
