@@ -1,2 +1,2 @@
 ecrRepoName: echoserver
-ecrImage: 042967111928.dkr.ecr.{{ awsregion }}.amazonaws.com/{{ image }} 
+ecrImage: 042967111928.dkr.ecr.{{ awsregion }}.amazonaws.com/{{ image }}
