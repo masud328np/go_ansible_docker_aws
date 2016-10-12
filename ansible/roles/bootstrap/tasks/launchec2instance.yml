@@ -1,5 +1,5 @@
 - name: gather facts
-  shell: aws ec2 describe-instances --filter Name=tag-value,Values={{ tag }} Name=subnet-id,Values={{ vpc.subnets.0.id }} Name=instance-state-name,Values=running
+  shell: aws ec2 describe-instances --region {{ awsregion }} --filter Name=tag-value,Values={{ tag }} Name=subnet-id,Values={{ vpc.subnets.0.id }} Name=instance-state-name,Values=running
   register: ec2out
   changed_when: false
 
@@ -20,7 +20,7 @@
   ec2:
    key_name: "{{ serverkeyname }}"
    instance_type: t2.micro
-   image: ami-562cf236
+   image: ami-20fab440
    wait: yes
    group_id: "{{ basic_firewalls.group_id }}"
    count: 1
@@ -56,7 +56,7 @@
  
 
 - name: wait until the ec2 is running completely
-  shell: aws ec2 describe-instance-status  --instance-ids {{ instance_id }} --filter Name=instance-status.reachability,Values=passed
+  shell: aws ec2 describe-instance-status --region {{ awsregion }}  --instance-ids {{ instance_id }} --filter Name=instance-status.reachability,Values=passed
   register: result
   until:  result.stdout.find("passed") != -1
   retries: 20

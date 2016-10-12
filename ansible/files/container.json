@@ -1,7 +1,7 @@
 {"containers":[{
 
   "name": "echoserver",
-  "image": "042967111928.dkr.ecr.us-west-2.amazonaws.com/echoserver:latest",
+  "image": "042967111928.dkr.ecr.us-west-1.amazonaws.com/echoserver:latest",
   "memory": 128,
   "cpu": 1,
   "essential": true,

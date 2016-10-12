@@ -6,6 +6,7 @@
 
 - name: Create task definition
   ecs_taskdefinition:
+    region: "{{ awsregion }}"
     containers: "{{  containers }}" 
     family: "{{ tag }}"
     state: present
@@ -19,6 +20,7 @@
 - name: Wait for register
   ecs_cluster:
       name: "{{ ecs_cluster }}"
+      region: "{{ awsregion }}"
       state: has_instances
       delay: 30
       repeat: 10
@@ -30,6 +32,7 @@
 - name: Run task
   ecs_task:
     operation: run
+    region: "{{ awsregion }}"
     cluster: "{{ ecs_cluster }}"
     task_definition: "{{ tag }}" 
     count: 1
